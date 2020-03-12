@@ -289,15 +289,15 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
         if (ver.y() > d) d = ver.y();
     }
 
-    for (int i = a; i < c; ++i) {
-        for (int j = b; j < d; ++j) {
+    for (int i = a; i <= c; ++i) {
+        for (int j = b; j <= d; ++j) {
             if (!insideTriangle(i, j, v.data())) continue;
             auto[alpha, beta, gamma] = computeBarycentric2D(i, j, t.v);
             float Z = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
             float zp = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
             zp *= Z;
 
-            auto ind = (height - 1 - j) * width + i;
+            auto ind = (height - j) * width + i;
             if (zp < depth_buf[ind]) {
                 depth_buf[ind] = zp;
                 Eigen::Vector2i pix(i, j);
@@ -306,12 +306,14 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
                 Eigen::Vector3f interpolated_color = interpolate(alpha, beta, gamma, t.color[0], t.color[1], t.color[2], 1.0);
                 Eigen::Vector3f interpolated_normal = interpolate(alpha, beta, gamma, t.normal[0], t.normal[1], t.normal[2], 1.0);
                 Eigen::Vector2f interpolated_texcoords = interpolate(alpha, beta, gamma, t.tex_coords[0], t.tex_coords[1], t.tex_coords[2], 1.0);
-                Eigen::Vector3f interpolated_shadingcoords = interpolated_normal;
+                //Eigen::Vector3f v1 = t.v[0].head<3>() / v[0].w(), v2 = t.v[1].head<3>() / v[0].w(), v3 = t.v[2].head<3>() / v[0].w();
+                Eigen::Vector3f interpolated_shadingcoords = interpolate(alpha, beta, gamma, view_pos[0], view_pos[1], view_pos[2], 1.0);
 
                 // shader
                 fragment_shader_payload payload(interpolated_color, interpolated_normal.normalized(), interpolated_texcoords, texture ? &*texture : nullptr);
                 payload.view_pos = interpolated_shadingcoords;
                 auto pixel_color = fragment_shader(payload);
+                //std::cout << pixel_color.x() << " " << pixel_color.y() << " " << pixel_color.z() << std::endl;
                 set_pixel(pix, pixel_color);
             }   
         }

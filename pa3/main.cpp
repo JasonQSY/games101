@@ -101,14 +101,22 @@ struct light
     Eigen::Vector3f intensity;
 };
 
+float max(float a, float b) {
+    return a > b ? a : b;
+}
+
+Eigen::Vector3f prod(Eigen::Vector3f a, Eigen::Vector3f b) {
+    Eigen::Vector3f c = {a.x() * b.x(), a.y() * b.y(), a.z() * b.z()};
+    return c;
+}
+
 Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
 {
     Eigen::Vector3f return_color = {0, 0, 0};
     if (payload.texture)
     {
         // TODO: Get the texture value at the texture coordinates of the current fragment
-
-
+        return_color = payload.texture->getColor(payload.tex_coords.x(), payload.tex_coords.y());
     }
     Eigen::Vector3f texture_color;
     texture_color << return_color.x(), return_color.y(), return_color.z();
@@ -136,8 +144,16 @@ Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
     {
         // TODO: For each light source in the code, calculate what the *ambient*, *diffuse*, and *specular* 
         // components are. Then, accumulate that result on the *result_color* object.
+        Eigen::Vector3f v = eye_pos - point, l = light.position - point;
+        float r = l.norm();
+        l = l / r;
+        v.normalized();
 
-
+        Eigen::Vector3f ambient = prod(ka, amb_light_intensity);
+        Eigen::Vector3f diffuse = prod(kd, light.intensity) / (r * r) * max(0.0, normal.dot(l));
+        Eigen::Vector3f h = (v + l) / (v + l).norm();
+        Eigen::Vector3f specular = prod(ks, light.intensity) / (r * r) * pow(max(0.0, normal.dot(h)), p);
+        result_color = ambient + diffuse + specular;
     }
 
     return result_color * 255.f;
@@ -167,8 +183,16 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
     {
         // TODO: For each light source in the code, calculate what the *ambient*, *diffuse*, and *specular* 
         // components are. Then, accumulate that result on the *result_color* object.
-        
+        Eigen::Vector3f v = eye_pos - point, l = light.position - point;
+        float r = l.norm();
+        l = l / r;
+        v.normalized();
 
+        Eigen::Vector3f ambient = prod(ka, amb_light_intensity);
+        Eigen::Vector3f diffuse = prod(kd, light.intensity) / (r * r) * max(0.0, normal.dot(l));
+        Eigen::Vector3f h = (v + l) / (v + l).norm();
+        Eigen::Vector3f specular = prod(ks, light.intensity) / (r * r) * pow(max(0.0, normal.dot(h)), p);
+        result_color = ambient + diffuse + specular;
     }
 
     return result_color * 255.f;
