@@ -4,8 +4,8 @@ My implmentation for [GAMES 101 Introduction to Computer Graphics](https://sites
 
 Sample outputs:
 
-![pa3][pa3/images/output.png]
+![pa3](imgs/pa3.png)
 
-![pa5][pa5/images/binary.ppm]
+![pa5](imgs/pa5.png)
 
-![pa6][pa6/images/binary.ppm]
+![pa6](imgs/pa6.png)
