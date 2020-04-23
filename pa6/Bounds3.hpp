@@ -96,7 +96,32 @@ inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& invDir,
     // invDir: ray direction(x,y,z), invDir=(1.0/x,1.0/y,1.0/z), use this because Multiply is faster that Division
     // dirIsNeg: ray direction(x,y,z), dirIsNeg=[int(x>0),int(y>0),int(z>0)], use this to simplify your logic
     // TODO test if ray bound intersects
-    
+
+    // x-plane
+    float tmin_x = (pMin.x - ray.origin.x) * invDir.x;
+    float tmax_x = (pMax.x - ray.origin.x) * invDir.x;
+    if (tmin_x > tmax_x) {
+        std::swap(tmin_x, tmax_x);
+    }
+
+    // y-plane
+    float tmin_y = (pMin.y - ray.origin.y) * invDir.y;
+    float tmax_y = (pMax.y - ray.origin.y) * invDir.y;
+    if (tmin_y > tmax_y) {
+        std::swap(tmin_y, tmax_y);
+    }
+
+    // z-plane
+    float tmin_z = (pMin.z - ray.origin.z) * invDir.z;
+    float tmax_z = (pMax.z - ray.origin.z) * invDir.z;
+    if (tmin_z > tmax_z) {
+        std::swap(tmin_z, tmax_z);
+    }
+
+    float tmin = std::max(std::max(tmin_x, tmin_y), tmin_z);
+    float tmax = std::min(std::min(tmax_x, tmax_y), tmax_z);
+
+    return tmin < tmax && tmax >= 0;
 }
 
 inline Bounds3 Union(const Bounds3& b1, const Bounds3& b2)
