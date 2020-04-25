@@ -5,11 +5,11 @@ My implmentation for [GAMES 101 Introduction to Computer Graphics](https://sites
 
 ## Rendering Results
 
-- Raterization
+- Rasterization
 
 <img src="imgs/pa3.png" alt="alt text" width="300">
 
-- Whitten-style Ray Tracing
+- Whitted-style Ray Tracing
 
 <img src="imgs/pa5.png" alt="alt text" height="300"> <img src="imgs/pa6.png" alt="alt text" height="300">
 
