@@ -7,7 +7,7 @@ My implmentation for [GAMES 101 Introduction to Computer Graphics](https://sites
 
 - Raterization
 
-<img src="imgs/pa3.png" alt="alt text" width="300">
+<img src="imgs/pa3.png" alt="alt text" width="300"> <img src="imgs/pa3-normal.png" alt="alt text" width="300"> 
 
 - Whitten-style Ray Tracing
 
